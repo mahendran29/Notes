@@ -40,7 +40,6 @@ public class createNotes extends AppCompatActivity {
         msaveNote = findViewById(R.id.saveNotes);
         mcreateTitle = findViewById(R.id.createTitleofNotes);
         mcreateContent = findViewById(R.id.createContentOfNote);
-
         Toolbar toolbar = findViewById(R.id.toolbarofcreatenote);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

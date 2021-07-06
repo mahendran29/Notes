@@ -90,6 +90,12 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
         return listItems.size();
     }
 
+    public void filterList(ArrayList<firebasemodel> filteredList)
+    {
+        listItems = filteredList;
+        notifyDataSetChanged();
+    }
+
     public  static  class ExampleViewHolder extends RecyclerView.ViewHolder
     {
         TextView textView;

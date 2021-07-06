@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+    <item android:id="@+id/ascen"
+        android:title="Ascending"></item>
+    <item android:id="@+id/descen"
+        android:title="Descending"></item>
+
     <item android:id="@+id/logout"
         android:title="Log Out"></item>
 

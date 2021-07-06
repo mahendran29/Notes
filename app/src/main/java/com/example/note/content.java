@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 public class content extends AppCompatActivity {
 
     TextView titleTextView;
     TextView content;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,4 +31,6 @@ public class content extends AppCompatActivity {
         titleTextView.setText(title);
         content.setText(description);
     }
+
+
 }

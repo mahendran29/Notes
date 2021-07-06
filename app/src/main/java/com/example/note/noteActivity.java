@@ -10,12 +10,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -43,7 +49,8 @@ public class noteActivity extends AppCompatActivity {
     ArrayList<firebasemodel> lists;
      static ExampleAdapter adapter;
      RecyclerView recyclerView;
-
+     EditText editText;
+     AutoCompleteTextView autoCompleteTextView;
     FloatingActionButton mcreateNotes;
 
 
@@ -66,6 +73,40 @@ public class noteActivity extends AppCompatActivity {
             }
         });
 
+        editText = findViewById(R.id.searchEditText);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                   filter(s.toString());
+            }
+        });
+
+
+    }
+
+    private  void filter(String text)
+    {
+        ArrayList<firebasemodel> filteredList = new ArrayList<>();
+
+        for(firebasemodel item : lists)
+        {
+            if(item.getTitle().toLowerCase().contains(text.toLowerCase()))
+            {
+                filteredList.add(item);
+            }
+        }
+
+        adapter.filterList(filteredList);
     }
 
     @Override
@@ -98,7 +139,7 @@ public class noteActivity extends AppCompatActivity {
     }
 
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN|
-            ItemTouchHelper.START| ItemTouchHelper.END,0) {
+            ItemTouchHelper.START| ItemTouchHelper.END,ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
         @Override
         public boolean onMove(@NonNull @NotNull RecyclerView recyclerView, @NonNull @NotNull RecyclerView.ViewHolder viewHolder, @NonNull @NotNull RecyclerView.ViewHolder target) {
 
@@ -112,8 +153,11 @@ public class noteActivity extends AppCompatActivity {
 
         @Override
         public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
-
+                  lists.remove(viewHolder.getAdapterPosition());
+                  adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
         }
+
+
     };
 
 
@@ -137,10 +181,58 @@ public class noteActivity extends AppCompatActivity {
                 finish();
                 startActivity(new Intent(noteActivity.this,MainActivity.class));
 
+            case R.id.ascen:
+                showassc();
+
+
+            case R.id.descen:
+                showdesc();
+
+
         }
 
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showassc()
+    {
+        firebaseFirestore.collection("notes").document(firebaseUser.getUid()).collection("myNotes").orderBy("title",Query.Direction.ASCENDING).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                  lists = new ArrayList<>();
+                  for(QueryDocumentSnapshot documentSnapshot:queryDocumentSnapshots)
+                  {
+                      firebasemodel note = documentSnapshot.toObject(firebasemodel.class);
+                      note.setDocumentID(documentSnapshot.getId());
+                      lists.add(note);
+                  }
+
+                adapter=new ExampleAdapter(lists,noteActivity.this);
+                recyclerView.setAdapter(adapter);
+                recyclerView.setLayoutManager(new LinearLayoutManager(noteActivity.this));
+            }
+        });
+    }
+
+    public void showdesc()
+    {
+        firebaseFirestore.collection("notes").document(firebaseUser.getUid()).collection("myNotes").orderBy("title",Query.Direction.DESCENDING).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                lists = new ArrayList<>();
+                for(QueryDocumentSnapshot documentSnapshot:queryDocumentSnapshots)
+                {
+                    firebasemodel note = documentSnapshot.toObject(firebasemodel.class);
+                    note.setDocumentID(documentSnapshot.getId());
+                    lists.add(note);
+                }
+
+                adapter=new ExampleAdapter(lists,noteActivity.this);
+                recyclerView.setAdapter(adapter);
+                recyclerView.setLayoutManager(new LinearLayoutManager(noteActivity.this));
+            }
+        });
     }
 
 
