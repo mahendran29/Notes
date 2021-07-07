@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +15,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -28,6 +30,7 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
     FirebaseFirestore firestore;
     FirebaseAuth firebaseAuth;
     FirebaseUser firebaseUser;
+
 
     public ExampleAdapter(ArrayList<firebasemodel> mlistitems, Context context)
     {
@@ -50,17 +53,27 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
     {
         firebasemodel note = listItems.get(position);
         holder.textView.setText(note.getTitle());
+        holder.calendar.setText("Created on: "+note.getTime());
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DocumentReference documentReference = firestore.collection("notes")
                         .document(firebaseUser.getUid()).collection("myNotes").document(note.getDocumentID());
+
                 documentReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        Toast.makeText(context.getApplicationContext(),"Note Deleted",Toast.LENGTH_SHORT).show();
                         noteActivity.adapter.notifyItemRemoved(position);
+                        firebasemodel note = listItems.get(position);
+
+                        Intent intent3 = new Intent(context,noteActivity.class);
+                        intent3.putExtra("check",1);
+                        intent3.putExtra("title",note.getTitle());
+                        intent3.putExtra("description",note.getContent());
+                        intent3.putExtra("id",note.getTime());
+                        context.startActivity(intent3);
+
 
                     }
                 });
@@ -77,6 +90,7 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
 
                 intent.putExtra("title",note.getTitle());
                 intent.putExtra("description",note.getContent());
+                intent.putExtra("id",note.getDocumentID());
 
                 context.startActivity(intent);
             }
@@ -84,6 +98,8 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
 
 
     }
+
+
 
     @Override
     public int getItemCount() {
@@ -101,12 +117,14 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
         TextView textView;
         CardView cardView;
         ImageView imageView;
+        TextView calendar;
         public ExampleViewHolder(@NonNull  View itemView) {
             super(itemView);
 
             textView=itemView.findViewById(R.id.noteTitle);
             cardView=itemView.findViewById(R.id.notecard);
             imageView=itemView.findViewById(R.id.delete);
+            calendar=itemView.findViewById(R.id.Timecalendar);
         }
     }
 

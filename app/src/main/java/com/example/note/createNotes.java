@@ -21,6 +21,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.DateFormat;
+import java.util.Calendar;
 
 
 public class createNotes extends AppCompatActivity {
@@ -62,8 +64,10 @@ public class createNotes extends AppCompatActivity {
                 {
                     DocumentReference documentReference = firebaseFirestore.collection("notes").document(firebaseUser.getUid()).collection("myNotes").document();
 
+                    Calendar calendar = Calendar.getInstance();
+                    String currentDate = DateFormat.getDateInstance().format(calendar.getTime());
 
-                      firebasemodel map = new firebasemodel(title,content);
+                      firebasemodel map = new firebasemodel(title,content,currentDate);
 
                      documentReference.set(map).addOnSuccessListener(new OnSuccessListener<Void>() {
                          @Override

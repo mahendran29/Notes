@@ -6,6 +6,7 @@ public class firebasemodel
 {
     private String title;
     private String content;
+    private String time;
 
 
 
@@ -14,10 +15,11 @@ public class firebasemodel
 
     }
 
-    public firebasemodel(String title,String content)
+    public firebasemodel(String title,String content,String time)
     {
         this.title=title;
         this.content=content;
+        this.time=time;
     }
 
     @Exclude
@@ -45,5 +47,13 @@ public class firebasemodel
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

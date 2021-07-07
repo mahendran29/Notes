@@ -15,22 +15,41 @@
         app:cardMaxElevation="5dp"
         android:id="@+id/notecard">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginRight="40dp">
 
-
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/noteTitle"
                     android:paddingLeft="20dp"
                     android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
+                    android:paddingBottom="8dp"
                     android:text="Developer"
                     android:textSize="20sp"
                     android:textColor="@color/black"
-                    android:layout_weight="1"
-                    />
+                    android:layout_weight="1" />
 
-                <ImageView
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/noteTitle"
+                    android:id="@+id/Timecalendar"
+                    android:textColor="@color/black"
+                    android:paddingBottom="8dp"
+                    android:text="Time"
+                    android:paddingLeft="20dp"/>
+
+            </RelativeLayout>
+        </LinearLayout>
+
+        <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:id="@+id/delete"

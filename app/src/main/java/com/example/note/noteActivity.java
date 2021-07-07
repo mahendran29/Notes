@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,10 +20,14 @@ import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -50,8 +55,10 @@ public class noteActivity extends AppCompatActivity {
      static ExampleAdapter adapter;
      RecyclerView recyclerView;
      EditText editText;
-     AutoCompleteTextView autoCompleteTextView;
+    // AutoCompleteTextView autoCompleteTextView;
     FloatingActionButton mcreateNotes;
+
+
 
 
 
@@ -90,6 +97,15 @@ public class noteActivity extends AppCompatActivity {
                    filter(s.toString());
             }
         });
+        int check = getIntent().getIntExtra("check",0);
+        if(check==1)
+        {
+            String title = getIntent().getStringExtra("title");
+            String content = getIntent().getStringExtra("description");
+            String id = getIntent().getStringExtra("id");
+
+            undo(title,content,id);
+        }
 
 
     }
@@ -138,6 +154,7 @@ public class noteActivity extends AppCompatActivity {
         });
     }
 
+
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN|
             ItemTouchHelper.START| ItemTouchHelper.END,ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
         @Override
@@ -153,8 +170,7 @@ public class noteActivity extends AppCompatActivity {
 
         @Override
         public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
-                  lists.remove(viewHolder.getAdapterPosition());
-                  adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+
         }
 
 
@@ -190,8 +206,6 @@ public class noteActivity extends AppCompatActivity {
 
 
         }
-
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -233,6 +247,19 @@ public class noteActivity extends AppCompatActivity {
                 recyclerView.setLayoutManager(new LinearLayoutManager(noteActivity.this));
             }
         });
+    }
+
+    public void undo(String title,String desc,String id)
+    {
+        Snackbar snackBar = Snackbar .make(findViewById(android.R.id.content),"Note is Removed!", Snackbar.LENGTH_LONG) .setAction("undo", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                firebasemodel note = new firebasemodel(title,desc,id);
+                noteBook.add(note);
+            }
+        });
+        snackBar.setActionTextColor(Color.BLACK);
+        snackBar.show();
     }
 
 
