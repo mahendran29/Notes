@@ -2,10 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-<!--    <item android:id="@+id/share"-->
-<!--        android:icon="@drawable/ic_baseline_share_24"-->
-<!--        android:title="share"-->
-<!--        app:showAsAction="always"></item>-->
+
+    <item android:id="@+id/archive"
+        android:title="Archive"
+        android:icon="@drawable/ic_baseline_archive_24"
+        app:showAsAction="always"></item>
 
     <item android:id="@+id/ascen"
         android:title="Ascending"></item>

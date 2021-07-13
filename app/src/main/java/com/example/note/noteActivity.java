@@ -3,6 +3,7 @@ package com.example.note;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.CollapsibleActionView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -31,6 +34,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -55,8 +59,7 @@ public class noteActivity extends AppCompatActivity {
      static ExampleAdapter adapter;
      RecyclerView recyclerView;
      EditText editText;
-    // AutoCompleteTextView autoCompleteTextView;
-    FloatingActionButton mcreateNotes;
+     FloatingActionButton mcreateNotes;
 
 
 
@@ -171,9 +174,48 @@ public class noteActivity extends AppCompatActivity {
         @Override
         public void onSwiped(@NonNull @NotNull RecyclerView.ViewHolder viewHolder, int direction) {
 
+            firebasemodel note = adapter.Document(viewHolder.getAdapterPosition());
+            String documentID = note.getDocumentID();
+            String title = note.getTitle();
+            String time = note.getTime();
+            String content = note.getContent();
+
+            firebaseFirestore.collection("notes")
+                    .document(firebaseUser.getUid()).collection("myNotes").document(documentID).delete();
+
+
+
+
+            DocumentReference documentReference = firebaseFirestore.collection("notes").document(firebaseUser.getUid()).collection("Archive").document();
+
+          ArchiveBaseModel map = new ArchiveBaseModel(title,time,content);
+          documentReference.set(map).addOnSuccessListener(new OnSuccessListener<Void>() {
+              @Override
+              public void onSuccess(Void unused) {
+                  Toast.makeText(noteActivity.this, "Archived", Toast.LENGTH_SHORT).show();
+              }
+          }).addOnFailureListener(new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull @NotNull Exception e) {
+                  Toast.makeText(noteActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+              }
+          });
         }
 
+        @Override
+        public void clearView(@NonNull @NotNull RecyclerView recyclerView, @NonNull @NotNull RecyclerView.ViewHolder viewHolder) {
+            super.clearView(recyclerView, viewHolder);
 
+            viewHolder.itemView.setBackgroundColor(ContextCompat.getColor(viewHolder.itemView.getContext(),R.color.black ));
+        }
+
+        @Override
+        public void onSelectedChanged(@Nullable @org.jetbrains.annotations.Nullable RecyclerView.ViewHolder viewHolder, int actionState) {
+            super.onSelectedChanged(viewHolder, actionState);
+            if(actionState==ItemTouchHelper.ACTION_STATE_DRAG){
+                viewHolder.itemView.setBackgroundColor(Color.CYAN);
+            }
+        }
     };
 
 
@@ -194,8 +236,8 @@ public class noteActivity extends AppCompatActivity {
         {
             case R.id.logout:
                 firebaseAuth.signOut();
-                finish();
                 startActivity(new Intent(noteActivity.this,MainActivity.class));
+                finish();
 
             case R.id.ascen:
                 showassc();
@@ -203,6 +245,10 @@ public class noteActivity extends AppCompatActivity {
 
             case R.id.descen:
                 showdesc();
+
+            case R.id.archive:
+                Intent arch = new Intent(noteActivity.this,Archive.class);
+                startActivity(arch);
 
 
         }

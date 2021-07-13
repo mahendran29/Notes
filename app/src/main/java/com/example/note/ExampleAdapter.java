@@ -32,6 +32,8 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
     FirebaseUser firebaseUser;
 
 
+
+
     public ExampleAdapter(ArrayList<firebasemodel> mlistitems, Context context)
     {
         listItems=mlistitems;
@@ -110,6 +112,11 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
     {
         listItems = filteredList;
         notifyDataSetChanged();
+    }
+    public firebasemodel Document(int position)
+    {
+        firebasemodel note = listItems.get(position);
+        return note;
     }
 
     public  static  class ExampleViewHolder extends RecyclerView.ViewHolder
